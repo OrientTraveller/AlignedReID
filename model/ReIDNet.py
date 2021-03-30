@@ -18,13 +18,16 @@ class ReIDNet(nn.Module):
     forward()，用于网络的计算前向传播结果（反向传播不需要自己编写）
     """
 
-    def __init__(self, num_classes, loss={'softmax, metric'}, aligned=False, **kwargs):
+    def __init__(self, num_classes, loss=None, aligned=False):
         # 第一个参数num_classes指定网络训练时输出的分类结果有几个类
-        # 第二个参数loss指定训练网络使用的损失函数
+        # 第二个参数loss指定训练网络使用的损失函数，可选'softmax'、'metric'、'softmax, metric'或者不指定自动使用'softmax, metric'
         # 第三个参数aligned指定该网络是否使用AlignedReID的局部特征分支
         super().__init__()
+        if loss is None:
+            loss = {'softmax, metric'}
         resnet50 = torchvision.models.resnet50(pretrained=True)  # 预训练参数指定为True，预训练的数据集是ImageNet数据集
         self.loss = loss
+
         # 进行基础网络修改
         """
         使用list(yournet.children())将网络按照层次分开
@@ -32,9 +35,11 @@ class ReIDNet(nn.Module):
         ！！注意nn.Sequential函数不能是list，只能是网络层！！
         """
         self.base = nn.Sequential(*list(resnet50.children())[:-2])
+
         # 分类器
         self.classifier = nn.Linear(2048, num_classes)
         self.aligned = aligned
+
         # 如果使用局部特征分支，则需要指定一些用到的网络层与函数
         if self.aligned:
             self.horizon_pool = HorizontalMaxPool2d()  # 自定义水平最大池化层，用于展开特征向量
@@ -79,6 +84,6 @@ if __name__ == "__main__":
     model = ReIDNet(num_classes=751, aligned=True)
     imgs = torch.rand(32, 3, 256, 128)
     y, f, lf = model(imgs)
-    print(y.size())
-    print(f.size())
-    print(lf.size())
+    print(y.shape)
+    print(f.shape)
+    print(lf.shape)
