@@ -2,8 +2,7 @@ import torch
 import torchvision
 from torch import nn
 from torch.nn import functional as func
-from .HorizontalMaxPool2d import HorizontalMaxPool2d
-from IPython import embed
+from HorizontalMaxPool2d import HorizontalMaxPool2d
 
 """
 该文件指定网络的结构
@@ -76,9 +75,9 @@ class ReIDNet(nn.Module):
                 print('loss setting error')
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     model = ReIDNet(num_classes=751, aligned=True)
-    imgs = torch.rand(32, 3, 128, 64)
+    imgs = torch.rand(32, 3, 256, 128)
     y, f, lf = model(imgs)
     print(y.size())
     print(f.size())
