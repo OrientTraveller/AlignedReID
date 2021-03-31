@@ -4,6 +4,7 @@ from torch import nn
 from torch.nn import functional as func
 from HorizontalMaxPool2d import HorizontalMaxPool2d
 
+
 """
 该文件指定网络的结构
 根据“是否计算局部特征、损失函数类型”决定网络返回哪些计算结果
